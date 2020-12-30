@@ -1,0 +1,10 @@
+1 - t,d
+2 - n,gn
+3 - m
+4 - r
+5 - l,gl
+6 - c,g
+7 - ch,gh
+8 - f,v
+9 - p,b
+0 - z,s,sc
