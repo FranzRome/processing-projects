@@ -1,1 +1,1 @@
-# Loow in MASTER branch, not this branch (MAIN)
+# Look in MASTER branch, not this branch (MAIN)
