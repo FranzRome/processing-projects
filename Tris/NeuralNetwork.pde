@@ -66,7 +66,7 @@ public class NeuralNetwork
          neurons[0][i] = inputs[i];
        }
        
-       for(int i=1; i<inputs.length; i++) //<>//
+       for(int i=1; i<layers.length; i++)
        {
           for(int j=0; j<neurons[i].length; j++)
          {
@@ -88,11 +88,11 @@ public class NeuralNetwork
   }
   
   public void mutate(){
-    int action = round(random(0,2));
     
     for(int i=1; i<weights.length; i++){
       for(int j=0; j < weights[i].length; j++){
-        for(int k=0; k < weights[j].length; k++){
+        for(int k=0; k < weights[i][j].length; k++){
+          int action = round(random(0,2)); //<>//
           if(action == 1)
             weights[i][j][k] += random(-0.15, 0.15);
           if(action == 2)

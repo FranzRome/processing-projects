@@ -1,7 +1,7 @@
 int numeroCelle = 3;
 char [][] griglia = new char[numeroCelle][numeroCelle];
 int distanzaLinee = 100;
-int distanzaBordi = 260;
+int distanzaBordi = 460;
 int dimFinestra = 0;
 int turno = 1;
 String testoVittoria="";
@@ -21,7 +21,7 @@ void setup() {
     }
   }
   
-  int[] layers = {9,6,3};
+  int[] layers = {9,9,9,9,9};
   
   ia = new NeuralNetwork(layers);
   
@@ -30,7 +30,7 @@ void setup() {
   textAlign(CENTER, CENTER);
   textSize(42);
   
-  frameRate(60);
+  frameRate(10);
 }
 
 void draw() {
@@ -74,10 +74,25 @@ void mouseClicked() {
   if(testoVittoria == "") {
     clickGriglia((int)indiciGriglia.x, (int)indiciGriglia.y);
    }
-   
-   controllaVittoria();
  }
 
+
+void clickGriglia(int i, int j){
+  
+  //println("i:" + i + " j:" + j);
+  
+  if(griglia[i][j] == ' ') {
+    if(turno == 1) {
+      griglia[i][j] = 'X';
+      turno = 2;
+    }
+    else if(turno == 2) {
+      griglia[i][j] = 'O';
+      turno = 1;
+    }
+  }
+  controllaVittoria();
+}
 
 void croce(float x, float y, float diametro) {
   strokeWeight(2);
@@ -137,40 +152,41 @@ PVector mappaGriglia(float x, float y){
   return result;
 }
 
-void clickGriglia(int i, int j){
-  
-  //println("i:" + i + " j:" + j);
-  
-  if(griglia[i][j] == ' ') {
-    if(turno == 1) {
-      griglia[i][j] = 'X';
-      turno = 2;
-    }
-    else if(turno == 2) {
-      griglia[i][j] = 'O';
-      turno = 1;
-    }
-  }
-}
-
 void muoviIA(){
+  // Make a one dimension array from the two dimension grid
   float[]input = new float[griglia.length * griglia[0].length];
-  for(int i=0; i<input.length; i++){
-    input[i] = float(griglia[0][0]);
+  
+  //Fill the array with values contained in the grid
+  for(int i=0; i<input.length; i++){   
+    input[i] = float(griglia[i/3][i%3]);
   }
   
   float results[]= ia.feedForward(input);
-  //clickGriglia(j*distanzaLinee, i*distanzaLinee);
   
+  /*
   println("Input layer:");
   for(int i=0; i<input.length; i++){
     print(input[i] + (i != input.length -1 ? "," : "\n"));
   }
   
-  println("Muovo IA " + round(results[0]) + "  " + round(results[1]) + "\n");
+  println("Output layer:");
+  for(int i=0; i<results.length; i++){
+    print(results[i] + (i != results.length -1 ? "," : "\n"));
+  }
+  */
   
-  clickGriglia(round(results[0]), round(results[1]));
+  float max = -Float.MAX_VALUE;
+  int maxIndex = 0;
+  for(int i=0; i<results.length; i++){
+    if(results[i] > max){
+      max = results[i];
+      maxIndex = i;
+    }
+  }
   
+  clickGriglia(round(maxIndex/3), round(maxIndex%3));
+  
+  ia.mutate();
   //println("Mutazione");
 }
 
@@ -184,7 +200,7 @@ void aiRender(int x, int y, int dist){
     text((i==0 ? "Input" : (i < ia.neurons.length - 1 ? "Hidden" :"Output")),
           x - 40,  y + dist*i);
     for(int j=0; j<ia.neurons[i].length; j++) {
-      ellipse(x + dist*j, y + dist*i, dist/2, dist/2);
+      ellipse(x + dist*j, y + dist*i, dist/1.6, dist/1.6);
       textSize(12);
       text(ia.neurons[i][j], x + dist*j,  y + dist*i);
     }
